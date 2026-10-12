@@ -1,0 +1,79 @@
+{
+  "status": "passed",
+  "rubric_version": "1.1",
+  "checks": [
+    "complete_public_split_and_original_text",
+    "all_five_original_human_axes",
+    "pinned_source_hashes",
+    "unique_ids_and_exact_label_joins",
+    "no_prompt_or_goal_family_split_leakage",
+    "v11_dimension_evidence_and_recomputed_scores",
+    "unknown_intervals_and_caps",
+    "question_scores_equal_across_answer_variants",
+    "honest_annotation_provenance",
+    "pair_coverage_and_derived_ties"
+  ],
+  "collections": {
+    "public": {
+      "rows": 1038,
+      "groups": 519,
+      "split_rows": {
+        "calibration": 832,
+        "holdout": 206
+      }
+    },
+    "chinese": {
+      "rows": 64,
+      "groups": 32,
+      "split_rows": {
+        "calibration": 50,
+        "holdout": 14
+      }
+    }
+  },
+  "judge_accuracy": "not_measured",
+  "ab_ba_stability": "not_measured",
+  "human_review_of_chinese": "not_performed",
+  "chinese_answer_caps": {
+    "confirmed_core_error": 17,
+    "off_topic": 2,
+    "promise_only": 1,
+    "false_completion": 1,
+    "fabricated_source": 1
+  },
+  "chinese_interval_records": {
+    "question": 2,
+    "answer": 1
+  },
+  "chinese_answer_score_distribution": {
+    "15": 1,
+    "19": 1,
+    "26": 3,
+    "30": 3,
+    "36": 2,
+    "38": 5,
+    "39": 9,
+    "40": 2,
+    "41": 1,
+    "51": 2,
+    "75": 1,
+    "86": 3,
+    "90": 1,
+    "93": 3,
+    "94": 12,
+    "100": 14
+  },
+  "ties": 1,
+  "unresolved_pairs": 1,
+  "files_sha256": {
+    "data/chinese/cases.source.json": "d0598a425e021d26fe9470891f73d131cd9195d10711a6fa7ad13a254c6975a8",
+    "data/chinese/inputs.jsonl": "837b41fa8695bd8b5dd15f0d7a667c81fdc4bed82817148abeae434679a2d96a",
+    "data/chinese/labels.jsonl": "ff49499caa9254edf12676510177163b0131207c270a8234ad76e40455258a40",
+    "data/chinese/pairs.jsonl": "35fba65d0ee8fe1c52781d2cee3cda47ee7b0b75be9d9940535d1a9f96be1437",
+    "data/chinese/scores.csv": "a4634077030d730db2bb6068d48e72d7540d57a69f9023a1b4b2a114bc7504c8",
+    "data/helpsteer2-validation.source.jsonl.gz": "610eeb5289494d613c4c0f70aade2df8df0b499f3a24e76d232f74e6909d010a",
+    "data/public/inputs.jsonl": "d46a1ea0c5c925f95e7f76bd82c3757870ba4290342f7442c69fab094d4278ee",
+    "data/public/labels.jsonl": "3b806ce4bf0345dc0cf52aed61b3210cc4c8965d948a5f859c1c2a36ec7cc77f",
+    "data/public/provenance.json": "e7ecae53726bc3a6662270bb3c27833e048f36b45f961eed2145791da4c78643"
+  }
+}

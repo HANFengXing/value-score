@@ -2,6 +2,8 @@
 
 问答价值评分 skill v1.1，以及可复核的回答—评分数据集 v0.1.0。
 
+本仓库以[完整压缩包](https://github.com/HANFengXing/value-score/blob/master/value-score-v0.1.0.zip)发布数据和 skill，包内保留完整目录结构。下载后先解压，再运行下面的脚本。根目录另有中文分数预览、数据卡和校验报告。
+
 | 数据部分 | 数量 | 标签来源 | 用途 |
 |---|---:|---|---|
 | HelpSteer2 完整 validation 子集 | 1,038 个回答，519 组问题 | NVIDIA 原始人工标签 | 对照 helpfulness / correctness / coherence 等原始维度 |
@@ -9,7 +11,7 @@
 
 **公开人工标签没有转换为个人价值总分。中文分数不是独立人工金标准。本仓库尚未测得评分准确率。**
 
-## 内容
+## 内容（压缩包内）
 
 ```text
 skills/value-score/       原样附带的已安装 skill v1.1
@@ -29,11 +31,16 @@ THIRD_PARTY_NOTICES.md    公开数据署名和许可证
 需要 Python 3.10+，仅使用标准库，没有 API 密钥或模型调用。
 
 ```bash
+python -m zipfile -e value-score-v0.1.0.zip value-score-package
+cd value-score-package
+```
+
+```bash
 python scripts/validate_dataset.py
 python -m unittest discover -s tests -v
 ```
 
-浏览中文分数可直接打开 `data/chinese/scores.csv`。完整证据在 `data/chinese/labels.jsonl`，各维等级是0–4整数，按 skill 原有脚本计算成0–100加权指数。
+浏览中文分数可直接打开仓库根目录的 [scores.csv](scores.csv)，或解压后的 `data/chinese/scores.csv`。完整证据在包内 `data/chinese/labels.jsonl`，各维等级是0–4整数，按 skill 原有脚本计算成0–100加权指数。
 
 重建固定版本数据：
 
@@ -58,10 +65,10 @@ python scripts/make_review_batch.py --collection public --split holdout --out re
 4. 英文 public 模板只使用原始对应维度。填好整数0–4预测后运行：
 
 ```bash
-python skills/value-score/scripts/benchmark.py data/public/labels.jsonl review/public/annotations.template.jsonl --out review/public/comparison.json
+python scripts/evaluate_public.py review/public/annotations.template.jsonl --split holdout --out review/public/comparison.json
 ```
 
-若只预测 holdout，上述报告会把 calibration 记录显示为缺失；应按 `split` 对原始标签作同样筛选，再报告 holdout 覆盖率。
+脚本自动按同一 split 筛选原始标签，报告覆盖率与弃评。空模板全部为null，不会产生评分准确率；先完成真实评分再对照。
 
 真实 A/B 与 B/A 顺序复核尚未执行。成对偏好由本次自评分数派生，并保留平局和无法判断；不能用于证明去偏或独立准确性。
 
@@ -69,4 +76,4 @@ python skills/value-score/scripts/benchmark.py data/public/labels.jsonl review/p
 
 `skills/value-score` 包含 `SKILL.md`、量表、评测协议、来源说明、计分脚本、公开维度对照脚本和代理配置。该目录是当前已安装版本的文件副本，没有修改本机全局配置。复用时将整个目录放入目标环境的技能目录，先保留已有版本。
 
-详细说明：[数据卡](docs/DATASET_CARD.md)、[字段与评分](docs/SCHEMA.md)、[第三方署名](THIRD_PARTY_NOTICES.md)。
+详细说明：[数据卡](DATASET_CARD.md)、包内 `docs/SCHEMA.md`、[第三方署名](THIRD_PARTY_NOTICES.md)。[校验报告](validation.json)只报告数据完整性与计分检查，不是模型效果报告。
