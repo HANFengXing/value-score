@@ -1,79 +1,58 @@
 # value-score
 
-问答价值评分 skill v1.1，以及可复核的回答—评分数据集 v0.1.0。
+问答价值评分技能1.2、回答—评分数据集0.1.0，以及已训练的本地模型1.0.0，合并发布为分发包0.2.0。
 
-本仓库以[完整压缩包](https://github.com/HANFengXing/value-score/blob/master/value-score-v0.1.0.zip)发布数据和 skill，包内保留完整目录结构。下载后先解压，再运行下面的脚本。根目录另有中文分数预览、数据卡和校验报告。
+[下载最新完整包](https://github.com/HANFengXing/value-score/blob/master/value-score-v0.2.0.zip) · [模型与评测说明](MODEL_CARD.md) · [实际训练报告](training_report.json) · [中文标签预览](scores.csv) · [数据卡](DATASET_CARD.md)
 
-| 数据部分 | 数量 | 标签来源 | 用途 |
-|---|---:|---|---|
-| HelpSteer2 完整 validation 子集 | 1,038 个回答，519 组问题 | NVIDIA 原始人工标签 | 对照 helpfulness / correctness / coherence 等原始维度 |
-| 中文构造案例 | 64 个回答，32 组问题 | Codex 编写并自评，尚未人工复核 | 演示个人量表、缺证据区间、严重错误上限和成对比较 |
+## 已交付
 
-**公开人工标签没有转换为个人价值总分。中文分数不是独立人工金标准。本仓库尚未测得评分准确率。**
+- 1038条HelpSteer2原始人工评分回答，519个问题；固定来源版本与CC-BY-4.0署名。
+- 64条中文构造回答、32个问题，附量表分维等级、证据、缺证据区间和改进方向；这些是作者自评，未人工复核。
+- 已训练TF-IDF + Ridge模型权重：英文三个原始人工维度、中文问答八个个人量表维度；严重错误复核信号另用逻辑回归。
+- 技能1.2接入本地模型入口，原量表1.1、权重、未知区间和错误上限保留。
+- 训练代码、模型文件、逐维留出评测、按组划分审计和15项测试。
 
-## 内容（压缩包内）
+英文有用性和正确性没有优于常数基线，中文问题预测也未改善。中文回答四维平均MAE 0.897，基线1.195，但只对14条构造自评回答评测。模型当前用于实验性辅助复核，不宣称独立人工准确率或自动事实核验。详见模型卡。
 
-```text
-skills/value-score/       原样附带的已安装 skill v1.1
-data/public/             英文问题回答与五项原始人工标签，分开保存
-data/chinese/            中文问题回答、分维评分依据、成对记录与 CSV
-data/helpsteer2-validation.source.jsonl.gz  固定版本的原始数据
-scripts/                 重建、完整性检查、盲评导出
-tests/                   计分、区间、上限和导出验证
-reports/validation.json  数据校验结果；不是模型效果报告
-docs/                    数据卡和字段说明
-dataset_manifest.json    数量、版本、划分方式
-THIRD_PARTY_NOTICES.md    公开数据署名和许可证
-```
+## 下载运行
 
-## 使用
+仓库通过完整ZIP保留目录结构，先下载再解压。需要Python3.11；原有计分和数据检查只用标准库，模型需要requirements-model.txt中的依赖。
 
-需要 Python 3.10+，仅使用标准库，没有 API 密钥或模型调用。
-
-```bash
-python -m zipfile -e value-score-v0.1.0.zip value-score-package
+```powershell
+python -m zipfile -e value-score-v0.2.0.zip value-score-package
 cd value-score-package
+python -m pip install -r requirements-model.txt
+python skills/value-score/scripts/score.py examples/predict-input.json --predict --kind answer
+python skills/value-score/scripts/score.py examples/predict-input.json --predict --kind question
 ```
 
-```bash
+输出提供`dimension_predictions`和中文`provisional_uncapped_index`；它们未经内容核验。`verified_result`初始为待评范围0–100，正式等级由证据记录决定。检查证据后，原命令`python skills/value-score/scripts/score.py evaluation.json`照常计算。
+
+## 重训与检查
+
+```powershell
+python scripts/train_model.py
 python scripts/validate_dataset.py
 python -m unittest discover -s tests -v
 ```
 
-浏览中文分数可直接打开仓库根目录的 [scores.csv](scores.csv)，或解压后的 `data/chinese/scores.csv`。完整证据在包内 `data/chinese/labels.jsonl`，各维等级是0–4整数，按 skill 原有脚本计算成0–100加权指数。
+训练仅使用calibration，三折按问题/相关目标家族隔离，留出预测先保存后评测。输入只有context/question/answer，参考答案与标签不进入特征。未知维度不作为0分训练，不将公共标签映射为个人价值总分，也不根据模型信号确认严重错误。
 
-重建固定版本数据：
+## 包内结构
 
-```bash
-python scripts/construct_chinese.py
-python scripts/build_dataset.py
-python scripts/validate_dataset.py
+```text
+skills/value-score/          技能1.2、量表1.1、计分和本地预测入口
+  models/baseline-v1/        已训练的JSON词表、元数据、NPZ数值权重
+data/public/                英文问题回答与原始五项人工标签
+data/chinese/               中文问答、自评分维依据与成对记录
+scripts/train_model.py      真正训练与保存模型；无外部API
+reports/model/              盲留出预测、训练报告与划分审计
+examples/                   可运行的预测输入
+tests/                      计分、数据隔离、未知标签、权重复载与证据边界检查
+docs/                       数据卡和字段说明
+requirements-model.txt      此次训练的精确依赖版本
 ```
 
-默认使用已附带的原始压缩文件。`--refresh-source` 只重新下载固定提交版本，不随上游 main 漂移。
+本地技能接入时复制包内整个`skills/value-score`目录，包括models，先备份已有版本。技能辅助评分只使用当前授权材料，不读取其他聊天，不自动记录长期日志。
 
-## 做一次真正的复核
-
-```bash
-python scripts/make_review_batch.py --collection chinese --split holdout --out review/chinese
-python scripts/make_review_batch.py --collection public --split holdout --out review/public
-```
-
-1. 先只提供 `questions.blind.jsonl`，完成问题评分后保存记录。
-2. 再提供 `answers.blind.jsonl`，完成回答评分。评审者不要预先查看本仓库标签或参考答案。
-3. 中文标注可以用 `skills/value-score/scripts/score.py` 检查结构与计算。人工复核保存为新版本，保留旧标签和分歧。
-4. 英文 public 模板只使用原始对应维度。填好整数0–4预测后运行：
-
-```bash
-python scripts/evaluate_public.py review/public/annotations.template.jsonl --split holdout --out review/public/comparison.json
-```
-
-脚本自动按同一 split 筛选原始标签，报告覆盖率与弃评。空模板全部为null，不会产生评分准确率；先完成真实评分再对照。
-
-真实 A/B 与 B/A 顺序复核尚未执行。成对偏好由本次自评分数派生，并保留平局和无法判断；不能用于证明去偏或独立准确性。
-
-## Skill
-
-`skills/value-score` 包含 `SKILL.md`、量表、评测协议、来源说明、计分脚本、公开维度对照脚本和代理配置。该目录是当前已安装版本的文件副本，没有修改本机全局配置。复用时将整个目录放入目标环境的技能目录，先保留已有版本。
-
-详细说明：[数据卡](DATASET_CARD.md)、包内 `docs/SCHEMA.md`、[第三方署名](THIRD_PARTY_NOTICES.md)。[校验报告](validation.json)只报告数据完整性与计分检查，不是模型效果报告。
+旧版[value-score-v0.1.0.zip](https://github.com/HANFengXing/value-score/blob/master/value-score-v0.1.0.zip)保留数据与原skill1.1。数据本体仍是0.1.0；新增的是训练代码、模型与技能接入。

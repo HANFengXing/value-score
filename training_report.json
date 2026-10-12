@@ -1,0 +1,988 @@
+{
+  "model_id": "value-score-tfidf-ridge-v1",
+  "model_version": "1.0.0",
+  "created_date": "2026-10-12",
+  "algorithm": "TF-IDF + per-dimension Ridge; binary logistic cap-review signal",
+  "neural_or_llm_finetuning": false,
+  "seed": 20261012,
+  "selection": "3-fold grouped CV on calibration only",
+  "tasks": {
+    "public_answer": {
+      "features": [
+        {
+          "source": "question",
+          "analyzer": "word",
+          "ngram_range": [
+            1,
+            2
+          ],
+          "min_df": 2,
+          "max_features": 6000
+        },
+        {
+          "source": "answer",
+          "analyzer": "word",
+          "ngram_range": [
+            1,
+            2
+          ],
+          "min_df": 2,
+          "max_features": 18000
+        },
+        {
+          "source": "answer",
+          "analyzer": "char_wb",
+          "ngram_range": [
+            2,
+            5
+          ],
+          "min_df": 2,
+          "max_features": 18000
+        }
+      ],
+      "heads": {
+        "helpfulness": {
+          "type": "ridge",
+          "parameter": 1.0,
+          "training_rows": 832,
+          "excluded_unknown_or_na": 0,
+          "unique_levels": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ]
+        },
+        "correctness": {
+          "type": "ridge",
+          "parameter": 1.0,
+          "training_rows": 832,
+          "excluded_unknown_or_na": 0,
+          "unique_levels": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ]
+        },
+        "coherence": {
+          "type": "ridge",
+          "parameter": 30.0,
+          "training_rows": 832,
+          "excluded_unknown_or_na": 0,
+          "unique_levels": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ]
+        }
+      },
+      "label_source": "HelpSteer2 original human annotations; same dataset builder did not author them",
+      "kind": "answer",
+      "training_rows": 832,
+      "training_groups": 416,
+      "holdout_rows": 206,
+      "holdout_groups": 103,
+      "cross_validation": {
+        "folds": 3,
+        "group_unit": "leakage_group when present, otherwise group_id",
+        "vectorizers_refit_inside_each_fold": true,
+        "heads": {
+          "helpfulness": {
+            "selected_parameter": 1.0,
+            "parameter_kind": "alpha",
+            "ordinal_mae_by_parameter": {
+              "0.3": 0.9230769230769231,
+              "1.0": 0.9182692307692307,
+              "3.0": 0.9278846153846154,
+              "10.0": 0.9230769230769231,
+              "30.0": 0.9206730769230769
+            },
+            "fold_median_baseline_mae": 0.9206730769230769,
+            "valid_labels": 832
+          },
+          "correctness": {
+            "selected_parameter": 1.0,
+            "parameter_kind": "alpha",
+            "ordinal_mae_by_parameter": {
+              "0.3": 0.9362980769230769,
+              "1.0": 0.9278846153846154,
+              "3.0": 0.9314903846153846,
+              "10.0": 0.9399038461538461,
+              "30.0": 0.9362980769230769
+            },
+            "fold_median_baseline_mae": 0.9362980769230769,
+            "valid_labels": 832
+          },
+          "coherence": {
+            "selected_parameter": 30.0,
+            "parameter_kind": "alpha",
+            "ordinal_mae_by_parameter": {
+              "0.3": 0.4651442307692308,
+              "1.0": 0.44591346153846156,
+              "3.0": 0.39663461538461536,
+              "10.0": 0.3737980769230769,
+              "30.0": 0.359375
+            },
+            "fold_median_baseline_mae": 0.35697115384615385,
+            "valid_labels": 832
+          }
+        }
+      },
+      "holdout_metrics": {
+        "helpfulness": {
+          "n": 206,
+          "mae": 1.058252427184466,
+          "exact_agreement": 0.2912621359223301,
+          "within_one_level": 0.7475728155339806,
+          "mean_signed_error_prediction_minus_label": 0.1262135922330097,
+          "quadratic_weighted_kappa": 0.021975697463981092,
+          "label_distribution": {
+            "0": 20,
+            "1": 20,
+            "2": 24,
+            "3": 57,
+            "4": 85
+          },
+          "prediction_distribution": {
+            "2": 31,
+            "3": 157,
+            "4": 18
+          },
+          "baseline_train_median": {
+            "n": 206,
+            "mae": 1.0145631067961165,
+            "exact_agreement": 0.2766990291262136,
+            "within_one_level": 0.8058252427184466,
+            "mean_signed_error_prediction_minus_label": 0.18932038834951456,
+            "quadratic_weighted_kappa": 0.0,
+            "label_distribution": {
+              "0": 20,
+              "1": 20,
+              "2": 24,
+              "3": 57,
+              "4": 85
+            },
+            "prediction_distribution": {
+              "3": 206
+            }
+          },
+          "beats_baseline_mae": false,
+          "grouped_mae_95": {
+            "method": "percentile bootstrap by related goal family or prompt; descriptive, not external validation",
+            "independent_groups": 103,
+            "repeats": 1000,
+            "interval_95": [
+              0.9223300970873787,
+              1.1941747572815533
+            ]
+          },
+          "continuous_mae": 1.0782177215269428
+        },
+        "correctness": {
+          "n": 206,
+          "mae": 1.0242718446601942,
+          "exact_agreement": 0.28640776699029125,
+          "within_one_level": 0.7815533980582524,
+          "mean_signed_error_prediction_minus_label": 0.09223300970873786,
+          "quadratic_weighted_kappa": 0.006464584764958814,
+          "label_distribution": {
+            "0": 15,
+            "1": 22,
+            "2": 21,
+            "3": 54,
+            "4": 94
+          },
+          "prediction_distribution": {
+            "2": 20,
+            "3": 163,
+            "4": 23
+          },
+          "baseline_train_median": {
+            "n": 206,
+            "mae": 0.9902912621359223,
+            "exact_agreement": 0.2621359223300971,
+            "within_one_level": 0.8203883495145631,
+            "mean_signed_error_prediction_minus_label": 0.07766990291262135,
+            "quadratic_weighted_kappa": 0.0,
+            "label_distribution": {
+              "0": 15,
+              "1": 22,
+              "2": 21,
+              "3": 54,
+              "4": 94
+            },
+            "prediction_distribution": {
+              "3": 206
+            }
+          },
+          "beats_baseline_mae": false,
+          "grouped_mae_95": {
+            "method": "percentile bootstrap by related goal family or prompt; descriptive, not external validation",
+            "independent_groups": 103,
+            "repeats": 1000,
+            "interval_95": [
+              0.8932038834951457,
+              1.1601941747572815
+            ]
+          },
+          "continuous_mae": 1.0226052751233976
+        },
+        "coherence": {
+          "n": 206,
+          "mae": 0.3446601941747573,
+          "exact_agreement": 0.7524271844660194,
+          "within_one_level": 0.9271844660194175,
+          "mean_signed_error_prediction_minus_label": 0.3446601941747573,
+          "quadratic_weighted_kappa": 0.025728339008702306,
+          "label_distribution": {
+            "0": 2,
+            "1": 1,
+            "2": 13,
+            "3": 35,
+            "4": 155
+          },
+          "prediction_distribution": {
+            "3": 1,
+            "4": 205
+          },
+          "baseline_train_median": {
+            "n": 206,
+            "mae": 0.34951456310679613,
+            "exact_agreement": 0.7524271844660194,
+            "within_one_level": 0.9223300970873787,
+            "mean_signed_error_prediction_minus_label": 0.34951456310679613,
+            "quadratic_weighted_kappa": 0.0,
+            "label_distribution": {
+              "0": 2,
+              "1": 1,
+              "2": 13,
+              "3": 35,
+              "4": 155
+            },
+            "prediction_distribution": {
+              "4": 206
+            }
+          },
+          "beats_baseline_mae": true,
+          "grouped_mae_95": {
+            "method": "percentile bootstrap by related goal family or prompt; descriptive, not external validation",
+            "independent_groups": 103,
+            "repeats": 1000,
+            "interval_95": [
+              0.2621359223300971,
+              0.44660194174757284
+            ]
+          },
+          "continuous_mae": 0.5187787946033469
+        }
+      },
+      "average_ordinal_mae": 0.8090614886731391,
+      "deployment_status": "advisory_only; evidence review required"
+    },
+    "chinese_question": {
+      "features": [
+        {
+          "source": "question",
+          "analyzer": "char",
+          "ngram_range": [
+            1,
+            3
+          ],
+          "min_df": 1,
+          "max_features": 6000
+        }
+      ],
+      "heads": {
+        "importance": {
+          "type": "ridge",
+          "parameter": 30.0,
+          "training_rows": 25,
+          "excluded_unknown_or_na": 0,
+          "unique_levels": [
+            2,
+            3
+          ]
+        },
+        "unknown": {
+          "type": "constant",
+          "parameter": 30.0,
+          "training_rows": 25,
+          "excluded_unknown_or_na": 0,
+          "unique_levels": [
+            3
+          ]
+        },
+        "leverage": {
+          "type": "ridge",
+          "parameter": 30.0,
+          "training_rows": 25,
+          "excluded_unknown_or_na": 0,
+          "unique_levels": [
+            2,
+            3
+          ]
+        },
+        "researchability": {
+          "type": "ridge",
+          "parameter": 30.0,
+          "training_rows": 25,
+          "excluded_unknown_or_na": 0,
+          "unique_levels": [
+            3,
+            4
+          ]
+        }
+      },
+      "label_source": "Codex constructed author self-annotation, not independent human gold",
+      "kind": "question",
+      "training_rows": 25,
+      "training_groups": 8,
+      "holdout_rows": 7,
+      "holdout_groups": 5,
+      "cross_validation": {
+        "folds": 3,
+        "group_unit": "leakage_group when present, otherwise group_id",
+        "vectorizers_refit_inside_each_fold": true,
+        "heads": {
+          "importance": {
+            "selected_parameter": 30.0,
+            "parameter_kind": "alpha",
+            "ordinal_mae_by_parameter": {
+              "0.3": 0.16,
+              "1.0": 0.16,
+              "3.0": 0.16,
+              "10.0": 0.16,
+              "30.0": 0.16
+            },
+            "fold_median_baseline_mae": 0.16,
+            "valid_labels": 25
+          },
+          "unknown": {
+            "selected_parameter": 30.0,
+            "parameter_kind": "alpha",
+            "ordinal_mae_by_parameter": {
+              "0.3": 0.0,
+              "1.0": 0.0,
+              "3.0": 0.0,
+              "10.0": 0.0,
+              "30.0": 0.0
+            },
+            "fold_median_baseline_mae": 0.0,
+            "valid_labels": 25
+          },
+          "leverage": {
+            "selected_parameter": 30.0,
+            "parameter_kind": "alpha",
+            "ordinal_mae_by_parameter": {
+              "0.3": 0.08,
+              "1.0": 0.08,
+              "3.0": 0.08,
+              "10.0": 0.08,
+              "30.0": 0.08
+            },
+            "fold_median_baseline_mae": 0.08,
+            "valid_labels": 25
+          },
+          "researchability": {
+            "selected_parameter": 30.0,
+            "parameter_kind": "alpha",
+            "ordinal_mae_by_parameter": {
+              "0.3": 0.04,
+              "1.0": 0.04,
+              "3.0": 0.04,
+              "10.0": 0.04,
+              "30.0": 0.04
+            },
+            "fold_median_baseline_mae": 0.04,
+            "valid_labels": 25
+          }
+        }
+      },
+      "holdout_metrics": {
+        "importance": {
+          "n": 6,
+          "mae": 0.16666666666666666,
+          "exact_agreement": 0.8333333333333334,
+          "within_one_level": 1.0,
+          "mean_signed_error_prediction_minus_label": -0.16666666666666666,
+          "quadratic_weighted_kappa": 0.0,
+          "label_distribution": {
+            "3": 5,
+            "4": 1
+          },
+          "prediction_distribution": {
+            "3": 6
+          },
+          "baseline_train_median": {
+            "n": 6,
+            "mae": 0.16666666666666666,
+            "exact_agreement": 0.8333333333333334,
+            "within_one_level": 1.0,
+            "mean_signed_error_prediction_minus_label": -0.16666666666666666,
+            "quadratic_weighted_kappa": 0.0,
+            "label_distribution": {
+              "3": 5,
+              "4": 1
+            },
+            "prediction_distribution": {
+              "3": 6
+            }
+          },
+          "beats_baseline_mae": false,
+          "grouped_mae_95": {
+            "method": "percentile bootstrap by related goal family or prompt; descriptive, not external validation",
+            "independent_groups": 5,
+            "repeats": 1000,
+            "interval_95": [
+              0.0,
+              0.375
+            ]
+          },
+          "continuous_mae": 0.3243688796170027
+        },
+        "unknown": {
+          "n": 6,
+          "mae": 0.3333333333333333,
+          "exact_agreement": 0.6666666666666666,
+          "within_one_level": 1.0,
+          "mean_signed_error_prediction_minus_label": -0.3333333333333333,
+          "quadratic_weighted_kappa": 0.0,
+          "label_distribution": {
+            "3": 4,
+            "4": 2
+          },
+          "prediction_distribution": {
+            "3": 6
+          },
+          "baseline_train_median": {
+            "n": 6,
+            "mae": 0.3333333333333333,
+            "exact_agreement": 0.6666666666666666,
+            "within_one_level": 1.0,
+            "mean_signed_error_prediction_minus_label": -0.3333333333333333,
+            "quadratic_weighted_kappa": 0.0,
+            "label_distribution": {
+              "3": 4,
+              "4": 2
+            },
+            "prediction_distribution": {
+              "3": 6
+            }
+          },
+          "beats_baseline_mae": false,
+          "grouped_mae_95": {
+            "method": "percentile bootstrap by related goal family or prompt; descriptive, not external validation",
+            "independent_groups": 5,
+            "repeats": 1000,
+            "interval_95": [
+              0.0,
+              0.75
+            ]
+          },
+          "continuous_mae": 0.3333333333333333
+        },
+        "leverage": {
+          "n": 6,
+          "mae": 0.16666666666666666,
+          "exact_agreement": 0.8333333333333334,
+          "within_one_level": 1.0,
+          "mean_signed_error_prediction_minus_label": -0.16666666666666666,
+          "quadratic_weighted_kappa": 0.0,
+          "label_distribution": {
+            "3": 5,
+            "4": 1
+          },
+          "prediction_distribution": {
+            "3": 6
+          },
+          "baseline_train_median": {
+            "n": 6,
+            "mae": 0.16666666666666666,
+            "exact_agreement": 0.8333333333333334,
+            "within_one_level": 1.0,
+            "mean_signed_error_prediction_minus_label": -0.16666666666666666,
+            "quadratic_weighted_kappa": 0.0,
+            "label_distribution": {
+              "3": 5,
+              "4": 1
+            },
+            "prediction_distribution": {
+              "3": 6
+            }
+          },
+          "beats_baseline_mae": false,
+          "grouped_mae_95": {
+            "method": "percentile bootstrap by related goal family or prompt; descriptive, not external validation",
+            "independent_groups": 5,
+            "repeats": 1000,
+            "interval_95": [
+              0.0,
+              0.375
+            ]
+          },
+          "continuous_mae": 0.2449109125329131
+        },
+        "researchability": {
+          "n": 7,
+          "mae": 0.5714285714285714,
+          "exact_agreement": 0.7142857142857143,
+          "within_one_level": 0.8571428571428571,
+          "mean_signed_error_prediction_minus_label": 0.5714285714285714,
+          "quadratic_weighted_kappa": 0.0,
+          "label_distribution": {
+            "1": 1,
+            "3": 1,
+            "4": 5
+          },
+          "prediction_distribution": {
+            "4": 7
+          },
+          "baseline_train_median": {
+            "n": 7,
+            "mae": 0.5714285714285714,
+            "exact_agreement": 0.7142857142857143,
+            "within_one_level": 0.8571428571428571,
+            "mean_signed_error_prediction_minus_label": 0.5714285714285714,
+            "quadratic_weighted_kappa": 0.0,
+            "label_distribution": {
+              "1": 1,
+              "3": 1,
+              "4": 5
+            },
+            "prediction_distribution": {
+              "4": 7
+            }
+          },
+          "beats_baseline_mae": false,
+          "grouped_mae_95": {
+            "method": "percentile bootstrap by related goal family or prompt; descriptive, not external validation",
+            "independent_groups": 5,
+            "repeats": 1000,
+            "interval_95": [
+              0.0,
+              1.25
+            ]
+          },
+          "continuous_mae": 0.5884170454600365
+        }
+      },
+      "average_ordinal_mae": 0.30952380952380953,
+      "deployment_status": "advisory_only; evidence review required"
+    },
+    "chinese_answer": {
+      "features": [
+        {
+          "source": "question",
+          "analyzer": "char",
+          "ngram_range": [
+            1,
+            3
+          ],
+          "min_df": 1,
+          "max_features": 2500
+        },
+        {
+          "source": "answer",
+          "analyzer": "char",
+          "ngram_range": [
+            1,
+            4
+          ],
+          "min_df": 1,
+          "max_features": 6000
+        }
+      ],
+      "heads": {
+        "alignment": {
+          "type": "ridge",
+          "parameter": 0.3,
+          "training_rows": 50,
+          "excluded_unknown_or_na": 0,
+          "unique_levels": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ]
+        },
+        "reliability": {
+          "type": "ridge",
+          "parameter": 0.3,
+          "training_rows": 50,
+          "excluded_unknown_or_na": 0,
+          "unique_levels": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ]
+        },
+        "gain": {
+          "type": "ridge",
+          "parameter": 0.3,
+          "training_rows": 50,
+          "excluded_unknown_or_na": 0,
+          "unique_levels": [
+            0,
+            1,
+            3,
+            4
+          ]
+        },
+        "efficiency": {
+          "type": "ridge",
+          "parameter": 30.0,
+          "training_rows": 50,
+          "excluded_unknown_or_na": 0,
+          "unique_levels": [
+            1,
+            3,
+            4
+          ]
+        },
+        "cap_risk": {
+          "type": "binary_logistic",
+          "parameter": 3.0,
+          "training_rows": 50,
+          "excluded_unknown_or_na": 0,
+          "unique_levels": [
+            0,
+            1
+          ]
+        }
+      },
+      "label_source": "Codex constructed author self-annotation, not independent human gold",
+      "kind": "answer",
+      "training_rows": 50,
+      "training_groups": 8,
+      "holdout_rows": 14,
+      "holdout_groups": 5,
+      "cross_validation": {
+        "folds": 3,
+        "group_unit": "leakage_group when present, otherwise group_id",
+        "vectorizers_refit_inside_each_fold": true,
+        "heads": {
+          "alignment": {
+            "selected_parameter": 0.3,
+            "parameter_kind": "alpha",
+            "ordinal_mae_by_parameter": {
+              "0.3": 0.74,
+              "1.0": 0.76,
+              "3.0": 0.76,
+              "10.0": 0.76,
+              "30.0": 0.76
+            },
+            "fold_median_baseline_mae": 0.84,
+            "valid_labels": 50
+          },
+          "reliability": {
+            "selected_parameter": 0.3,
+            "parameter_kind": "alpha",
+            "ordinal_mae_by_parameter": {
+              "0.3": 1.62,
+              "1.0": 1.66,
+              "3.0": 1.74,
+              "10.0": 1.76,
+              "30.0": 1.82
+            },
+            "fold_median_baseline_mae": 1.7,
+            "valid_labels": 50
+          },
+          "gain": {
+            "selected_parameter": 0.3,
+            "parameter_kind": "alpha",
+            "ordinal_mae_by_parameter": {
+              "0.3": 1.28,
+              "1.0": 1.42,
+              "3.0": 1.46,
+              "10.0": 1.46,
+              "30.0": 1.46
+            },
+            "fold_median_baseline_mae": 1.46,
+            "valid_labels": 50
+          },
+          "efficiency": {
+            "selected_parameter": 30.0,
+            "parameter_kind": "alpha",
+            "ordinal_mae_by_parameter": {
+              "0.3": 0.24,
+              "1.0": 0.2,
+              "3.0": 0.2,
+              "10.0": 0.2,
+              "30.0": 0.2
+            },
+            "fold_median_baseline_mae": 0.2,
+            "valid_labels": 50
+          },
+          "cap_risk": {
+            "selected_parameter": 3.0,
+            "parameter_kind": "C",
+            "ordinal_mae_by_parameter": {
+              "0.3": 0.38,
+              "1.0": 0.38,
+              "3.0": 0.36
+            },
+            "fold_median_baseline_mae": 0.38,
+            "valid_labels": 50
+          }
+        }
+      },
+      "holdout_metrics": {
+        "alignment": {
+          "n": 14,
+          "mae": 0.9285714285714286,
+          "exact_agreement": 0.35714285714285715,
+          "within_one_level": 0.7857142857142857,
+          "mean_signed_error_prediction_minus_label": 0.35714285714285715,
+          "quadratic_weighted_kappa": 0.1743589743589744,
+          "label_distribution": {
+            "0": 1,
+            "1": 2,
+            "2": 2,
+            "3": 3,
+            "4": 6
+          },
+          "prediction_distribution": {
+            "3": 12,
+            "4": 2
+          },
+          "baseline_train_median": {
+            "n": 14,
+            "mae": 1.0714285714285714,
+            "exact_agreement": 0.21428571428571427,
+            "within_one_level": 0.7857142857142857,
+            "mean_signed_error_prediction_minus_label": 0.21428571428571427,
+            "quadratic_weighted_kappa": 0.0,
+            "label_distribution": {
+              "0": 1,
+              "1": 2,
+              "2": 2,
+              "3": 3,
+              "4": 6
+            },
+            "prediction_distribution": {
+              "3": 14
+            }
+          },
+          "beats_baseline_mae": true,
+          "grouped_mae_95": {
+            "method": "percentile bootstrap by related goal family or prompt; descriptive, not external validation",
+            "independent_groups": 5,
+            "repeats": 1000,
+            "interval_95": [
+              0.3,
+              1.3125
+            ]
+          },
+          "continuous_mae": 1.0197507764562326
+        },
+        "reliability": {
+          "n": 13,
+          "mae": 1.2307692307692308,
+          "exact_agreement": 0.15384615384615385,
+          "within_one_level": 0.6923076923076923,
+          "mean_signed_error_prediction_minus_label": 0.46153846153846156,
+          "quadratic_weighted_kappa": 0.3476702508960574,
+          "label_distribution": {
+            "0": 4,
+            "1": 2,
+            "3": 3,
+            "4": 4
+          },
+          "prediction_distribution": {
+            "2": 6,
+            "3": 7
+          },
+          "baseline_train_median": {
+            "n": 13,
+            "mae": 1.9230769230769231,
+            "exact_agreement": 0.3076923076923077,
+            "within_one_level": 0.5384615384615384,
+            "mean_signed_error_prediction_minus_label": 1.9230769230769231,
+            "quadratic_weighted_kappa": 0.0,
+            "label_distribution": {
+              "0": 4,
+              "1": 2,
+              "3": 3,
+              "4": 4
+            },
+            "prediction_distribution": {
+              "4": 13
+            }
+          },
+          "beats_baseline_mae": true,
+          "grouped_mae_95": {
+            "method": "percentile bootstrap by related goal family or prompt; descriptive, not external validation",
+            "independent_groups": 5,
+            "repeats": 1000,
+            "interval_95": [
+              0.7643382352941176,
+              1.7272727272727273
+            ]
+          },
+          "continuous_mae": 1.2828871085930502
+        },
+        "gain": {
+          "n": 14,
+          "mae": 1.2142857142857142,
+          "exact_agreement": 0.14285714285714285,
+          "within_one_level": 0.6428571428571429,
+          "mean_signed_error_prediction_minus_label": 0.35714285714285715,
+          "quadratic_weighted_kappa": 0.37209302325581395,
+          "label_distribution": {
+            "0": 4,
+            "1": 3,
+            "3": 3,
+            "4": 4
+          },
+          "prediction_distribution": {
+            "2": 9,
+            "3": 5
+          },
+          "baseline_train_median": {
+            "n": 14,
+            "mae": 1.5714285714285714,
+            "exact_agreement": 0.21428571428571427,
+            "within_one_level": 0.5,
+            "mean_signed_error_prediction_minus_label": 1.0,
+            "quadratic_weighted_kappa": 0.0,
+            "label_distribution": {
+              "0": 4,
+              "1": 3,
+              "3": 3,
+              "4": 4
+            },
+            "prediction_distribution": {
+              "3": 14
+            }
+          },
+          "beats_baseline_mae": true,
+          "grouped_mae_95": {
+            "method": "percentile bootstrap by related goal family or prompt; descriptive, not external validation",
+            "independent_groups": 5,
+            "repeats": 1000,
+            "interval_95": [
+              1.0,
+              1.5
+            ]
+          },
+          "continuous_mae": 1.3174270749875805
+        },
+        "efficiency": {
+          "n": 14,
+          "mae": 0.21428571428571427,
+          "exact_agreement": 0.7857142857142857,
+          "within_one_level": 1.0,
+          "mean_signed_error_prediction_minus_label": 0.21428571428571427,
+          "quadratic_weighted_kappa": 0.0,
+          "label_distribution": {
+            "3": 3,
+            "4": 11
+          },
+          "prediction_distribution": {
+            "4": 14
+          },
+          "baseline_train_median": {
+            "n": 14,
+            "mae": 0.21428571428571427,
+            "exact_agreement": 0.7857142857142857,
+            "within_one_level": 1.0,
+            "mean_signed_error_prediction_minus_label": 0.21428571428571427,
+            "quadratic_weighted_kappa": 0.0,
+            "label_distribution": {
+              "3": 3,
+              "4": 11
+            },
+            "prediction_distribution": {
+              "4": 14
+            }
+          },
+          "beats_baseline_mae": false,
+          "grouped_mae_95": {
+            "method": "percentile bootstrap by related goal family or prompt; descriptive, not external validation",
+            "independent_groups": 5,
+            "repeats": 1000,
+            "interval_95": [
+              0.0,
+              0.42857142857142855
+            ]
+          },
+          "continuous_mae": 0.3298952824508929
+        },
+        "cap_risk": {
+          "n": 14,
+          "mae": 0.14285714285714285,
+          "exact_agreement": 0.8571428571428571,
+          "within_one_level": 1.0,
+          "mean_signed_error_prediction_minus_label": -0.14285714285714285,
+          "quadratic_weighted_kappa": 0.44000000000000006,
+          "label_distribution": {
+            "0": 11,
+            "1": 3
+          },
+          "prediction_distribution": {
+            "0": 13,
+            "1": 1
+          },
+          "baseline_train_median": {
+            "n": 14,
+            "mae": 0.21428571428571427,
+            "exact_agreement": 0.7857142857142857,
+            "within_one_level": 1.0,
+            "mean_signed_error_prediction_minus_label": -0.21428571428571427,
+            "quadratic_weighted_kappa": 0.0,
+            "label_distribution": {
+              "0": 11,
+              "1": 3
+            },
+            "prediction_distribution": {
+              "0": 14
+            }
+          },
+          "beats_baseline_mae": true,
+          "grouped_mae_95": {
+            "method": "percentile bootstrap by related goal family or prompt; descriptive, not external validation",
+            "independent_groups": 5,
+            "repeats": 1000,
+            "interval_95": [
+              0.0,
+              0.3
+            ]
+          },
+          "continuous_mae": 0.4367356352819446,
+          "true_positive": 1,
+          "false_positive": 0,
+          "false_negative": 2,
+          "precision": 1.0,
+          "recall": 0.3333333333333333,
+          "interpretation": "Agreement with author supplied gate-presence labels; not fact checking"
+        }
+      },
+      "average_ordinal_mae": 0.8969780219780221,
+      "deployment_status": "advisory_only; evidence review required"
+    }
+  },
+  "personal_independent_human_accuracy": "not_measured",
+  "public_source": "https://huggingface.co/datasets/nvidia/HelpSteer2/tree/990b2711a36180dd19d9c94b8627844866f8982a",
+  "limitations": [
+    "Small English subset; labels are English and do not verify facts at inference time.",
+    "Chinese targets are same-author self-annotations, not human gold.",
+    "Question-value labels are sparse and often constant.",
+    "Predicted risk does not confirm any serious-error gate.",
+    "No real AB/BA or independent reviewer test performed."
+  ],
+  "elapsed_seconds": 11.284960499964654,
+  "runtime_versions": {
+    "python": "3.11.7",
+    "numpy": "1.26.4",
+    "scipy": "1.11.4",
+    "scikit-learn": "1.2.2"
+  }
+}

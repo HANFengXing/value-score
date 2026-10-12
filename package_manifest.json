@@ -1,0 +1,16 @@
+{
+  "package_version": "0.2.0",
+  "dataset_version": "0.1.0",
+  "skill_version": "1.2",
+  "rubric_version": "1.1",
+  "model_version": "1.0.0",
+  "model_trained": true,
+  "public_axis_holdout_agreement_measured": true,
+  "independent_chinese_human_accuracy_measured": false,
+  "automatic_verified_scoring": false,
+  "model_artifacts_sha256": {
+    "model.json": "8d4eaebc11e360891c94608302c9d8e4b30010702445af20ae76212172ecf806",
+    "vocabulary.json": "ae7c47191bb63dbf50e9aa50d905b578bd74ee7a0b265b2f707ed2150e93a6ae",
+    "weights.npz": "0e4945b4971ab228c4407567ece45a1ecfa75f542f9b8104d934ee5652595014"
+  }
+}

@@ -14,3 +14,8 @@
 ## 已安装 value-score skill
 
 `skills/value-score` 是用户要求附带的当前本地skill v1.1副本，包含其原有来源说明。内容未修改。`references/evaluation.md` 中“本次12条对照”描述原skill制作时的历史工作，本次数据集增加了完整1,038条公开validation记录；历史陈述不表示已对新记录重做模型评分。
+
+
+## 新增本地模型
+
+英文模型参数由上述NVIDIA HelpSteer2固定版本数据训练而来，保留原数据CC-BY-4.0署名及来源；训练和JSON/NPZ转换为本次修改。中文参数由已明确标注的构造自评标签训练，不是独立人工金标准。第三方库未打包，仅在requirements-model.txt声明依赖。
