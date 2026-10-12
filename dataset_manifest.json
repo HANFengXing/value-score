@@ -1,0 +1,30 @@
+{
+  "dataset_version": "0.1.0",
+  "rubric_version": "1.1",
+  "created_date": "2026-10-12",
+  "split_seed": "20261012",
+  "split_method": "SHA256(seed:group); ordered prefix reaches floor(20%) prompt groups; related Chinese goal families are indivisible",
+  "chinese_split_unit": "related_goal_family (leakage_group); all answers and related variants stay together",
+  "collections": {
+    "public": {
+      "rows": 1038,
+      "groups": 519,
+      "split_rows": {
+        "calibration": 832,
+        "holdout": 206
+      }
+    },
+    "chinese": {
+      "rows": 64,
+      "groups": 32,
+      "split_rows": {
+        "calibration": 50,
+        "holdout": 14
+      }
+    }
+  },
+  "independent_v11_human_labels": 0,
+  "external_accuracy_measured": false,
+  "private_conversations_included": false,
+  "question_value_public_gold_available": false
+}
